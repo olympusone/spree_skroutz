@@ -11,13 +11,23 @@ xml.mywebstore do
           xml.tag! "name" do
             xml.cdata! product.name
           end
+
+          if product.storefront_description.present?
+            xml.tag! "description", product.storefront_description&.truncate(10000)
+          end
+
           xml.tag! "link" do
             xml.cdata! spree_storefront_resource_url(product)
           end
 
           if product.default_image.present?
             xml.tag! "image" do
-              xml.cdata! spree_image_url(product.featured_image, width: 500, height: 500)
+              xml.cdata! spree_image_url(product.default_image, width: 500, height: 500)
+            end
+          end
+          if product.secondary_image.present?
+            xml.tag! "additionalimage" do
+              xml.cdata! spree_image_url(product.secondary_image, width: 500, height: 500)
             end
           end
 
@@ -39,29 +49,36 @@ xml.mywebstore do
             end
           end
 
-          xml.tag! "mnp", product.sku if product.sku.present?
           xml.tag! "ean", product.barcode if product.barcode.present?
           xml.tag! "availability", product.in_stock? ? "In stock" : "Out of stock"
-          # TODO: add size
           xml.tag! "weight", "#{product.weight} #{product.weight_unit}" if product.weight.present?
-          # xml.tag! "shipping_cost", format('%.2f', product.shipping_cost.to_d) if product.respond_to?(:shipping_cost) && product.shipping_cost.present?
-          # xml.tag! "color", product.color if product.respond_to?(:color) && product.color.present?
-          xml.tag! "description", product.storefront_description&.truncate(10000) if product.storefront_description.present?
+
+          colors = product.option_values.select{|ov| ov.option_type.name.downcase == 'color' }
+            .map(&:presentation)
+            .uniq
+          xml.tag! "color", colors.join(',') if colors.any?
+
+          size = product.option_values.select{|ov| ov.option_type.name.downcase == 'size' }
+            .map(&:presentation)
+            .uniq
+          xml.tag! "size", size.join(',') if size.any?
+
           xml.tag! "quantity", product.total_on_hand
 
-          if product.variants.any?
+          if product.has_variants?
             xml.variations do
               product.variants.each do |variant|
                 xml.variation do
                   xml.tag! "variationid", variant.id
-                  xml.tag! "link" do
-                    xml.cdata! spree_storefront_resource_url(variant)
-                  end
                   xml.tag! "availability", variant.in_stock? ? "In stock" : "Out of stock"
-                  xml.tag! "manufacturersku", variant.sku if variant.sku.present?
                   xml.tag! "ean", variant.barcode if variant.barcode.present?
                   xml.tag! "price_with_vat", format('%.2f', variant.display_amount.to_d)
-                  # TODO: add size
+
+                  size = variant.option_values.select{|ov| ov.option_type.name.downcase == 'size' }
+                    .map(&:presentation)
+                    .uniq
+                  xml.tag! "size", size.join(',') if size.any?
+
                   xml.tag! "quantity", variant.total_on_hand
                 end
               end
