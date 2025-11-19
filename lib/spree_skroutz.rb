@@ -1,0 +1,5 @@
+require 'spree_core'
+require 'spree_extension'
+require 'spree_skroutz/engine'
+require 'spree_skroutz/version'
+require 'spree_skroutz/configuration'
