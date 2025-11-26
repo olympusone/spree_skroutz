@@ -8,32 +8,33 @@ xml.mywebstore do
       storefront_products_scope.find_each do |product|
         xml.product do
           xml.tag! "id", product.id
+
           xml.tag! "name" do
             xml.cdata! product.name
-          end
-
-          if product.storefront_description.present?
-            xml.tag! "description", product.storefront_description&.truncate(10000)
           end
 
           xml.tag! "link" do
             xml.cdata! spree_storefront_resource_url(product)
           end
 
-          if product.default_image.present?
+          if product.featured_image.present?
             xml.tag! "image" do
-              xml.cdata! spree_image_url(product.default_image, width: 500, height: 500)
+              xml.cdata! spree_image_url(product.featured_image, width: 500, height: 500)
             end
           end
-          if product.secondary_image.present?
+
+          product.master_images.each do |image|
+            next if product.featured_image == image
+
             xml.tag! "additionalimage" do
-              xml.cdata! spree_image_url(product.secondary_image, width: 500, height: 500)
+              xml.cdata! spree_image_url(image, width: 500, height: 500)
             end
           end
 
           xml.tag! "category" do
             xml.cdata! product_breadcrumb_taxons(product).map(&:name).join(' > ')
           end
+
           xml.tag! "price_with_vat", format('%.2f', product.display_amount.to_d)
 
           if product.tax_category.present?
@@ -43,6 +44,8 @@ xml.mywebstore do
             xml.tag! "vat", 0
           end
 
+          xml.tag! "availability", product.in_stock? ? "In stock" : "Out of stock"
+
           if product.brand.present?
             xml.tag! "manufacturer" do
               xml.cdata! product.brand.name
@@ -50,7 +53,12 @@ xml.mywebstore do
           end
 
           xml.tag! "ean", product.barcode if product.barcode.present?
-          xml.tag! "availability", product.in_stock? ? "In stock" : "Out of stock"
+
+          size = product.option_values.select{|ov| ov.option_type.name.downcase == 'size' }
+            .map(&:presentation)
+            .uniq
+          xml.tag! "size", size.join(',') if size.any?
+
           xml.tag! "weight", "#{product.weight} #{product.weight_unit}" if product.weight.present?
 
           colors = product.option_values.select{|ov| ov.option_type.name.downcase == 'color' }
@@ -58,10 +66,11 @@ xml.mywebstore do
             .uniq
           xml.tag! "color", colors.join(',') if colors.any?
 
-          size = product.option_values.select{|ov| ov.option_type.name.downcase == 'size' }
-            .map(&:presentation)
-            .uniq
-          xml.tag! "size", size.join(',') if size.any?
+          if product.storefront_description.present?
+            xml.tag! "description" do
+              xml.cdata! product.storefront_description&.truncate(10000)
+            end
+          end
 
           xml.tag! "quantity", product.total_on_hand
 
