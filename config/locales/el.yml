@@ -1,0 +1,8 @@
+---
+el:
+  spree:
+    admin:
+      integrations:
+        skroutz:
+          title: Skroutz
+          description: Το Skroutz είναι εργαλείο για καταχωρίσεις προϊόντων στο Skroutz Marketplace
