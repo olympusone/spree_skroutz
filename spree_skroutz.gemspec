@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.name        = 'spree_skroutz'
   s.version     = SpreeSkroutz::VERSION
   s.summary     = 'Spree Commerce Skroutz Extension'
-  s.description = 'Adds the ability to provide products listings to Skroutz Marketplace.'
+  s.description = 'Adds the ability to provide products listings to Skroutz Merchants.'
 
   s.required_ruby_version = '>= 3.0'
 

@@ -14,6 +14,26 @@ This is a Skroutz extension for [Spree Commerce](https://spreecommerce.org), an 
 
 2. Restart your server.
 
+## Usage
+
+To use your Skroutz endpoint as a data source in Skroutz Merchants:
+
+1. **Deploy your endpoint**
+  Ensure your authentication and data endpoints are publicly accessible and return the required data format (e.g., XML, CSV, or JSON).
+  For this extension, your endpoint will typically be:
+  `https://yoursite.com/skroutz/products.xml`
+
+2. **Copy your endpoint URL**
+  This is the URL that Skroutz Merchants will fetch data from.
+
+3. **Add as a data feed in Skroutz Merchants**
+   - Go to [Skroutz Merchants](https://merchants.skroutz.gr/).
+   - In the header, click **Settings & tools**.
+   - Select **Data sources**.
+   - Click **Add product source**.
+   - Enter your endpoint URL (e.g., `https://yoursite.com/skroutz/products.xml`) as the feed source.
+   - Set fetch frequency and credentials if authentication is required.
+
 ## Developing
 
 1. Create a dummy app:
