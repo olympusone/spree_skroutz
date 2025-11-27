@@ -46,6 +46,7 @@ xml.mywebstore do
 
           xml.tag! "availability", product.in_stock? ? "In stock" : "Out of stock"
 
+          # TODO: Spree::Product#brand is deprecated and will be removed in Spree 6. Please use Spree::Product#brand_taxon instead.
           if product.brand.present?
             xml.tag! "manufacturer" do
               xml.cdata! product.brand.name
