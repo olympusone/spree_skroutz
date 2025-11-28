@@ -1,3 +1,3 @@
 Rails.application.config.after_initialize do
-  Rails.application.config.spree.integrations << Spree::Integrations::Skroutz
+  Spree.integrations << Spree::Integrations::Skroutz
 end

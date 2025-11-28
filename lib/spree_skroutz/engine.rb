@@ -17,8 +17,8 @@ module SpreeSkroutz
       app.config.assets.precompile += %w[spree_skroutz_manifest]
     end
 
-    initializer 'spree_skroutz.importmap', after: 'spree.admin.importmap' do |app|
-      app.config.spree_admin.importmap.draw(root.join('config/importmap.rb'))
+    initializer 'spree_skroutz.importmap', before: 'importmap' do |app|
+      app.config.importmap.paths << root.join('config/importmap.rb')
     end
 
     def self.activate

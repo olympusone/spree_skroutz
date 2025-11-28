@@ -35,7 +35,7 @@ xml.mywebstore do
             xml.cdata! product_breadcrumb_taxons(product).map(&:name).join(' > ')
           end
 
-          xml.tag! "price_with_vat", format('%.2f', product.display_amount.to_d)
+          xml.tag! "price_with_vat", format('%.2f', product.display_price.to_d)
 
           if product.tax_category.present?
             tax_rate = product.tax_category.tax_rates.first
@@ -46,10 +46,9 @@ xml.mywebstore do
 
           xml.tag! "availability", product.in_stock? ? "In stock" : "Out of stock"
 
-          # TODO: Spree::Product#brand is deprecated and will be removed in Spree 6. Please use Spree::Product#brand_taxon instead.
-          if product.brand.present?
+          if product.brand_taxon.present?
             xml.tag! "manufacturer" do
-              xml.cdata! product.brand.name
+              xml.cdata! product.brand_taxon.name
             end
           end
 
@@ -82,7 +81,7 @@ xml.mywebstore do
                   xml.tag! "variationid", variant.id
                   xml.tag! "availability", variant.in_stock? ? "In stock" : "Out of stock"
                   xml.tag! "ean", variant.barcode if variant.barcode.present?
-                  xml.tag! "price_with_vat", format('%.2f', variant.display_amount.to_d)
+                  xml.tag! "price_with_vat", format('%.2f', variant.display_price.to_d)
 
                   size = variant.option_values.select{|ov| ov.option_type.name.downcase == 'size' }
                     .map(&:presentation)
