@@ -74,9 +74,13 @@ xml.mywebstore do
 
           xml.tag! "quantity", product.total_on_hand
 
-          if product.has_variants?
+          size_variants = product.variants.select { |v|
+            v.option_values.any? { |ov| ov.option_type.name.downcase == 'size' }
+          }
+
+          if size_variants.any?
             xml.variations do
-              product.variants.each do |variant|
+              size_variants.each do |variant|
                 xml.variation do
                   xml.tag! "variationid", variant.id
                   xml.tag! "availability", variant.in_stock? ? "In stock" : "Out of stock"
@@ -86,7 +90,7 @@ xml.mywebstore do
                   size = variant.option_values.select{|ov| ov.option_type.name.downcase == 'size' }
                     .map(&:presentation)
                     .uniq
-                  xml.tag! "size", size.join(',') if size.any?
+                  xml.tag! "size", size.join(',')
 
                   xml.tag! "quantity", variant.total_on_hand
                 end
