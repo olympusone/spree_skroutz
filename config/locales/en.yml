@@ -6,3 +6,10 @@ en:
         skroutz:
           title: Skroutz
           description: Skroutz is a channel integration for product listings on Skroutz Merchants
+          express_delivery: Express delivery
+          preferred_default_availability: Default availability (out of stock)
+          preferred_default_availability_none: "No default (out-of-stock products excluded)"
+      products:
+        skroutz_availability: Skroutz availability override
+        skroutz_availability_default: Use store default
+        skroutz_availability_hint: Override the store default availability for this product when out of stock or not tracking inventory.

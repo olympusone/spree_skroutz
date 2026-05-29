@@ -1,11 +1,20 @@
 xml.instruct! :xml, version: "1.0", encoding: "UTF-8"
 
+skroutz_integration = store_integration('skroutz')
+express_delivery = skroutz_integration&.preferred_express_delivery
+availability_in_stock = express_delivery ? "In Stock" : "Available from 1 to 3 days"
+default_availability = skroutz_integration&.preferred_default_availability.presence
+
 xml.mywebstore do
   cache [storefront_products_scope, current_currency] do
     xml.created_at Time.current.strftime("%Y-%m-%d %H:%M")
 
     xml.products do
       storefront_products_scope.find_each do |product|
+        in_stock = product.master.track_inventory && product.in_stock?
+        out_of_stock_availability = product.skroutz_availability.presence || default_availability
+        next if !in_stock && out_of_stock_availability.nil?
+
         xml.product do
           xml.tag! "id", product.id
 
@@ -44,7 +53,7 @@ xml.mywebstore do
             xml.tag! "vat", 0
           end
 
-          xml.tag! "availability", product.in_stock? ? "In stock" : "Out of stock"
+          xml.tag! "availability", in_stock ? availability_in_stock : out_of_stock_availability
 
           if product.brand_taxon.present?
             xml.tag! "manufacturer" do
@@ -83,7 +92,7 @@ xml.mywebstore do
               size_variants.each do |variant|
                 xml.variation do
                   xml.tag! "variationid", variant.id
-                  xml.tag! "availability", variant.in_stock? ? "In stock" : "Out of stock"
+                  xml.tag! "availability", variant.in_stock? ? availability_in_stock : out_of_stock_availability
                   xml.tag! "ean", variant.barcode if variant.barcode.present?
                   xml.tag! "price_with_vat", format('%.2f', variant.display_price.to_d)
 

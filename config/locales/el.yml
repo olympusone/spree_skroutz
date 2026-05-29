@@ -6,3 +6,10 @@ el:
         skroutz:
           title: Skroutz
           description: Το Skroutz είναι εργαλείο για καταχωρίσεις προϊόντων στο Skroutz Merchants
+          express_delivery: Γρήγορη παράδοση
+          preferred_default_availability: Προεπιλεγμένη διαθεσιμότητα (εκτός αποθέματος)
+          preferred_default_availability_none: "Χωρίς προεπιλογή (τα εκτός αποθέματος εξαιρούνται)"
+      products:
+        skroutz_availability: Διαθεσιμότητα Skroutz (override)
+        skroutz_availability_default: Χρήση προεπιλογής καταστήματος
+        skroutz_availability_hint: Αντικαταστήστε την προεπιλεγμένη διαθεσιμότητα για αυτό το προϊόν όταν είναι εκτός αποθέματος ή δεν παρακολουθεί απόθεμα.
