@@ -26,14 +26,15 @@ xml.mywebstore do
             xml.cdata! spree_storefront_resource_url(product)
           end
 
-          if product.featured_image.present?
+          default_image = product.default_image
+          if default_image.present?
             xml.tag! "image" do
-              xml.cdata! spree_image_url(product.featured_image, width: 500, height: 500)
+              xml.cdata! spree_image_url(default_image, width: 500, height: 500)
             end
           end
 
-          product.master_images.each do |image|
-            next if product.featured_image == image
+          product.variant_images.each do |image|
+            next if image == default_image
 
             xml.tag! "additionalimage" do
               xml.cdata! spree_image_url(image, width: 500, height: 500)
